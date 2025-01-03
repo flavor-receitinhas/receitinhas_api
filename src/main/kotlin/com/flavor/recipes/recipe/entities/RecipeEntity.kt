@@ -31,4 +31,6 @@ data class RecipeEntity(
     var createdAt: Timestamp,
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Timestamp,
+    @Column(name = "total_views", nullable = false)
+    var totalViews: Long
 )

@@ -1,4 +1,4 @@
-package com.flavor.recipes
+package com.flavor.recipes.core.security
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
@@ -7,10 +7,6 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.jwt.Jwt
-import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication
-import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.web.filter.OncePerRequestFilter
@@ -21,7 +17,7 @@ import java.io.IOException
 @Service
 class SecurityFilter : OncePerRequestFilter() {
     @Autowired
-    lateinit var tokenService: TokenService
+    lateinit var tokenService: SecurityService
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(

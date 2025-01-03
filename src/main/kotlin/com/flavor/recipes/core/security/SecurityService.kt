@@ -1,4 +1,4 @@
-package com.flavor.recipes
+package com.flavor.recipes.core.security
 
 
 import com.flavor.recipes.user.entities.UserEntity
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class TokenService {
+class SecurityService {
     var logger: Logger = LoggerFactory.getLogger("TokenService")
     fun validateToken(token: String?): UserEntity? {
         try {

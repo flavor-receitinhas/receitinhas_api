@@ -178,7 +178,8 @@ class RecipeService {
                 status = RecipeStatus.published,
                 userId = userId,
                 createdAt = Timestamp.from(Date().toInstant()),
-                updatedAt = Timestamp.from(Date().toInstant())
+                updatedAt = Timestamp.from(Date().toInstant()),
+                totalViews = 0
             )
         )
     }
