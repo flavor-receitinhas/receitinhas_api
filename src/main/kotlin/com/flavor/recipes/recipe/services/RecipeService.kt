@@ -3,7 +3,6 @@ package com.flavor.recipes.recipe.services
 import com.flavor.recipes.core.BusinessException
 import com.flavor.recipes.ingredient.repository.IngredientRepository
 import com.flavor.recipes.profile.repositories.ProfileRepository
-import com.flavor.recipes.profile.services.ProfileService
 import com.flavor.recipes.recipe.dtos.*
 import com.flavor.recipes.recipe.entities.RecipeEntity
 import com.flavor.recipes.recipe.entities.RecipeImageEntity
@@ -25,7 +24,7 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.sql.Timestamp
-import java.util.Date
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -108,6 +107,12 @@ class RecipeService {
                         )
                     )
                 }
+                predicates.add(
+                    builder.notEqual(
+                        root.get<String>(RecipeEntity::status.name),
+                        RecipeStatus.deleted.name
+                    )
+                )
                 return builder.and(*predicates.toTypedArray())
             }),
             PageRequest.of(
@@ -185,11 +190,7 @@ class RecipeService {
     }
 
     fun update(dto: RecipeUpdateDto, id: String): RecipeEntity {
-        val recipe = recipeRepository.findById(id).getOrNull()
-            ?: throw BusinessException("Receita não encontrada")
-        if (recipe.status == RecipeStatus.blocked) {
-            throw BusinessException("Está receita não pode ser alterada.")
-        }
+        val recipe = findRecipeValid(id)
         return recipeRepository.save(
             recipe.copy(
                 details = dto.details,
@@ -206,21 +207,30 @@ class RecipeService {
         )
     }
 
-    fun createImage(id: String, file: MultipartFile, isThumb: Boolean = false) {
-        val recipe = recipeRepository.findById(id).getOrNull()
-            ?: throw BusinessException("Receita não encontrada")
+    fun updateStatus(status: RecipeStatus, id: String): RecipeEntity {
+        val recipe = findRecipeValid(id)
+        return recipeRepository.save(
+            recipe.copy(
+                status = status,
+                updatedAt = Timestamp.from(Date().toInstant())
+            )
+        )
+    }
 
+
+    fun createImage(recipeId: String, file: MultipartFile, isThumb: Boolean = false) {
+        findRecipeValid(recipeId)
         if (isThumb) {
-            val quantity = recipeImageRepository.countByRecipeIdAndThumb(recipe.id!!, true)
+            val quantity = recipeImageRepository.countByRecipeIdAndThumb(recipeId, true)
             if (quantity > 1) throw BusinessException("Receita só pode ter uma capa")
         } else {
-            val quantity = recipeImageRepository.countByRecipeId(recipe.id!!)
+            val quantity = recipeImageRepository.countByRecipeId(recipeId)
             if (quantity > 10) throw BusinessException("Receita só pode ter 10 imagens")
         }
 
         val image = recipeImageRepository.save(
             RecipeImageEntity(
-                recipeId = recipe.id
+                recipeId = recipeId
             )
         )
         recipeBucketRepository.saveImage(image.id!!, file)
@@ -237,16 +247,15 @@ class RecipeService {
     }
 
     fun deleteImage(id: String) {
-        recipeImageRepository.findById(id).getOrNull()
+        val image = recipeImageRepository.findById(id).getOrNull()
             ?: throw BusinessException("Imagem não encontrada")
+        findRecipeValid(image.recipeId)
         recipeBucketRepository.deleteImage(id)
         recipeImageRepository.deleteById(id)
     }
 
     fun createRecipeIngredient(dto: RecipeIngredientCreateDto, recipeId: String): RecipeIngredientEntity {
-        recipeRepository.findById(recipeId).getOrNull()
-            ?: throw BusinessException("Receita não encontrada")
-
+        findRecipeValid(recipeId)
         ingredientRepository.findById(dto.ingredientId).getOrNull()
             ?: throw BusinessException("Ingrediente não encontrada")
 
@@ -261,8 +270,9 @@ class RecipeService {
     }
 
     fun deleteIngredient(id: String) {
-        ingredientRepository.findById(id).getOrNull()
+        val ingredient = recipeIngredientRepository.findById(id).getOrNull()
             ?: throw BusinessException("Ingrediente não encontrada")
+        findRecipeValid(ingredient.recipeId)
         ingredientRepository.deleteById(id)
     }
 
@@ -279,5 +289,14 @@ class RecipeService {
                 ingredientName = ingredient.get().name
             )
         }
+    }
+
+    private fun findRecipeValid(recipeId: String): RecipeEntity {
+        val recipe = recipeRepository.findById(recipeId).getOrNull()
+            ?: throw BusinessException("Receita não encontrada")
+        if (recipe.status == RecipeStatus.blocked || recipe.status == RecipeStatus.deleted) {
+            throw BusinessException("Está receita não pode ser alterada.")
+        }
+        return recipe
     }
 }

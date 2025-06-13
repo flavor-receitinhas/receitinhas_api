@@ -28,7 +28,7 @@ dependencies {
     implementation 'org.hibernate:hibernate-core:6.4.0.Final'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'com.google.firebase:firebase-admin:9.2.0'
+    implementation 'com.google.firebase:firebase-admin:9.5.0'
     implementation 'org.springframework.security:spring-security-web'
     implementation 'org.springframework.security:spring-security-config'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'

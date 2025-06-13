@@ -95,6 +95,11 @@ class RecipeController {
         return recipeService.update(body, id)
     }
 
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: String): RecipeEntity {
+        return recipeService.updateStatus(RecipeStatus.deleted, id)
+    }
+
     @PostMapping("/{recipeId}/images")
     @ResponseStatus(HttpStatus.CREATED)
     fun createFile(
