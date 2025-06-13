@@ -67,8 +67,8 @@ class RecipeController {
             sort = sort ?: RecipeEntity::createdAt.name,
             portionTo = portionTo,
             portionFrom = portionFrom,
-            timePreparedTo = portionTo,
-            timePreparedFrom = portionFrom,
+            timePreparedTo = timePreparedTo,
+            timePreparedFrom = timePreparedFrom,
             difficultyRecipe = difficultyRecipe,
             search = search,
         )
