@@ -110,7 +110,7 @@ class RecipeService {
                 predicates.add(
                     builder.notEqual(
                         root.get<String>(RecipeEntity::status.name),
-                        RecipeStatus.deleted.name
+                        RecipeStatus.deleted
                     )
                 )
                 return builder.and(*predicates.toTypedArray())
