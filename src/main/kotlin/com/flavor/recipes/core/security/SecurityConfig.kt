@@ -33,6 +33,7 @@ class SecurityConfig {
             }
             .authorizeHttpRequests { authorize ->
                 authorize.requestMatchers(HttpMethod.GET, "/doc/**").permitAll()
+                authorize.requestMatchers(HttpMethod.GET, "/dash/health").permitAll()
                 authorize.anyRequest().authenticated()
             }
             .addFilterBefore(securityFilter, BearerTokenAuthenticationFilter::class.java)
