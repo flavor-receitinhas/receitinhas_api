@@ -2,6 +2,7 @@ package com.flavor.recipes.profile.controllers
 
 import com.flavor.recipes.core.BusinessException
 import com.flavor.recipes.profile.dtos.ProfileNameDto
+import com.flavor.recipes.profile.dtos.ValidateName
 import com.flavor.recipes.profile.entities.ProfileEntity
 import com.flavor.recipes.profile.entities.UpdateProfileDto
 import com.flavor.recipes.profile.repositories.ProfileBucketRepository
@@ -18,7 +19,9 @@ import java.util.*
 @RequestMapping("/profile")
 @Tag(name = "Profile")
 class ProfileController {
-
+    private val usernameRegex = Regex(
+        "^(?![_.])[a-zA-Z0-9._ ]{1,30}(?<![_.])$"
+    );
 
     @Autowired
     lateinit var profileService: ProfileService
@@ -68,9 +71,9 @@ class ProfileController {
         @RequestBody profileName: ProfileNameDto,
         @PathVariable userId: String,
     ): ProfileEntity {
-        val find = profileService.findByName(profileName.name)
-        if (find != null) {
-            throw BusinessException("Esse nome ja está em uso, tente outro")
+        val resultValidateName = validateName(userId, profileName.name)
+        if (!resultValidateName.isValid) {
+            throw BusinessException(resultValidateName.message)
         }
         val userFind = profileService.byId(userId, profileName.name)
         return profileService.save(
@@ -81,5 +84,35 @@ class ProfileController {
         )
     }
 
+    @GetMapping("/{userId}/name/{name}/validate")
+    fun validateName(@PathVariable userId: String, @PathVariable name: String): ValidateName {
+        if (!usernameRegex.matches(name)) {
+            return ValidateName(
+                name = name,
+                isValid = false,
+                message = "Nome no formato inválido"
+            )
+        }
+        val find = profileService.findByName(name)
+        if (find != null) {
+            if (find.userId == userId) {
+                return ValidateName(
+                    name = name,
+                    isValid = false,
+                    message = "Você já usa esse nome"
+                )
+            }
+            return ValidateName(
+                name = name,
+                isValid = false,
+                message = "Esse nome ja está em uso, tente outro"
+            )
+        }
+        return ValidateName(
+            name = name,
+            isValid = true,
+            message = "Nome valido para uso"
+        )
+    }
 
 }
