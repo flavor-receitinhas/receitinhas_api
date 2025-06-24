@@ -93,6 +93,20 @@ class ProfileController {
                 message = "Nome no formato inválido"
             )
         }
+        if (name.trim().length < 3) {
+            return ValidateName(
+                name = name,
+                isValid = false,
+                message = "O nome deve ter no minimo 3 letras"
+            )
+        }
+        if (name.trim().length > 30) {
+            return ValidateName(
+                name = name,
+                isValid = false,
+                message = "O nome deve ter no maximo 30 letras"
+            )
+        }
         val find = profileService.findByName(name)
         if (find != null) {
             if (find.userId == userId) {
