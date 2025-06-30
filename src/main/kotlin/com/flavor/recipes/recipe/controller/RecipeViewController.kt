@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import kotlin.jvm.optionals.getOrNull
 
 @RestController
-@RequestMapping("/recipe/{recipeId}/view")
+@RequestMapping("/recipe/{recipeId}/views")
 @Tag(name = "Recipe")
 class RecipeViewController {
     @Autowired
@@ -24,7 +24,7 @@ class RecipeViewController {
     @Autowired
     lateinit var messageService: MessageService
 
-    @PostMapping("/v1")
+    @PostMapping
     fun putView(
         @PathVariable recipeId: String,
         @AuthenticationPrincipal userAuth: UserEntity
