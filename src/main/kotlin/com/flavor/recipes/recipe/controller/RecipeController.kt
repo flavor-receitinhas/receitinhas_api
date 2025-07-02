@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 class RecipeController {
     @Autowired
     lateinit var recipeService: RecipeService
+    @Autowired
     lateinit var favoriteRepository: FavoriteRepository
 
     @GetMapping
@@ -89,7 +90,7 @@ class RecipeController {
     @GetMapping("/{id}/details")
     fun getDetails(@PathVariable id: String, @AuthenticationPrincipal user: UserEntity): RecipeDetailsDto {
         val result = get(id)
-        val images = getImages (id)
+        val images = getImages(id)
         val ingredients = findIngredients(id)
         val favorite = favoriteRepository.findByUserIdAndRecipeId(user.id, id)
         return RecipeDetailsDto(
