@@ -1,6 +1,7 @@
 package com.flavor.recipes.recipe.controller
 
 import com.flavor.recipes.core.BusinessException
+import com.flavor.recipes.favorite.repositories.FavoriteRepository
 import com.flavor.recipes.recipe.dtos.*
 import com.flavor.recipes.recipe.entities.RecipeEntity
 import com.flavor.recipes.recipe.entities.RecipeImageEntity
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 class RecipeController {
     @Autowired
     lateinit var recipeService: RecipeService
+    lateinit var favoriteRepository: FavoriteRepository
 
     @GetMapping
     fun list(
@@ -82,6 +84,20 @@ class RecipeController {
             throw BusinessException("Está receita foi bloqueada")
         }
         return result
+    }
+
+    @GetMapping("/{id}/details")
+    fun getDetails(@PathVariable id: String, @AuthenticationPrincipal user: UserEntity): RecipeDetailsDto {
+        val result = get(id)
+        val images = findIngredients(id)
+        val ingredients = findIngredients(id)
+        val favorite = favoriteRepository.findByUserIdAndRecipeId(user.id, id)
+        return RecipeDetailsDto(
+            recipe = result.recipe,
+            images = images,
+            ingredients = ingredients,
+            isFavorite = favorite.isPresent
+        )
     }
 
     @PostMapping

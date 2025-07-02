@@ -222,7 +222,7 @@ class RecipeService {
         findRecipeValid(recipeId)
         if (isThumb) {
             val quantity = recipeImageRepository.countByRecipeIdAndThumb(recipeId, true)
-            if (quantity > 1) throw BusinessException("Receita só pode ter uma capa")
+            if (quantity.toInt() != 0) throw BusinessException("Receita só pode ter uma capa")
         } else {
             val quantity = recipeImageRepository.countByRecipeId(recipeId)
             if (quantity > 10) throw BusinessException("Receita só pode ter 10 imagens")
