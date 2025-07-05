@@ -1,6 +1,7 @@
 package com.flavor.recipes.recipe.controller
 
 import com.flavor.recipes.core.BusinessException
+import com.flavor.recipes.favorite.dtos.FavoriteCheckDto
 import com.flavor.recipes.favorite.repositories.FavoriteRepository
 import com.flavor.recipes.recipe.dtos.*
 import com.flavor.recipes.recipe.entities.RecipeEntity
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import kotlin.jvm.optionals.getOrNull
 
 @RestController
 @RequestMapping("/recipe")
@@ -43,8 +45,8 @@ class RecipeController {
             sort = sort ?: RecipeEntity::createdAt.name,
             portionTo = portionTo,
             portionFrom = portionFrom,
-            timePreparedTo = portionTo,
-            timePreparedFrom = portionFrom,
+            timePreparedTo = timePreparedTo,
+            timePreparedFrom = timePreparedFrom,
             difficultyRecipe = difficultyRecipe,
             search = search,
         )
@@ -97,7 +99,10 @@ class RecipeController {
             recipe = result,
             images = images,
             ingredients = ingredients,
-            isFavorite = favorite.isPresent
+            favorite = FavoriteCheckDto(
+                exists = favorite.isPresent,
+                favoriteId = favorite.getOrNull()?.id
+            )
         )
     }
 

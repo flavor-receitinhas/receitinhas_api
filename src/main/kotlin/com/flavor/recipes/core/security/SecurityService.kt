@@ -32,7 +32,7 @@ class SecurityService {
             if (e.authErrorCode == AuthErrorCode.REVOKED_ID_TOKEN) {
                 return null
             }
-            logger.error(e.message, e)
+            logger.info(e.message)
             return null
         }
     }

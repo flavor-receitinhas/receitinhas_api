@@ -1,6 +1,6 @@
 package com.flavor.recipes.recipe.dtos
 
-data class RecipeIngredientListDto(
+data class  RecipeIngredientListDto(
     val id: String? = null,
     val ingredientId: String,
     val ingredientName: String,
