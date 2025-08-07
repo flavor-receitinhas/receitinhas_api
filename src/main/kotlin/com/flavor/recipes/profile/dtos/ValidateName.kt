@@ -1,7 +1,7 @@
 package com.flavor.recipes.profile.dtos
 
 data class ValidateName(
-    val name: String,
-    val isValid: Boolean,
-    val message: String,
+    val name: String = "",
+    val isValid: Boolean = false,
+    val message: String = "",
 )
