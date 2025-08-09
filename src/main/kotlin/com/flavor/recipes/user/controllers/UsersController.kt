@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @Tag(name = "User")
 class UsersController(var usersService: UsersService) {
     @GetMapping
