@@ -8,7 +8,8 @@ import com.google.firebase.auth.FirebaseAuthException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-
+import java.sql.Timestamp
+import java.time.Instant
 
 @Service
 class SecurityService {
@@ -26,7 +27,8 @@ class SecurityService {
                 id = decodedToken.claims["user_id"] as String,
                 email = decodedToken.claims["email"] as String,
                 emailVerified = decodedToken.claims["email_verified"] as Boolean,
-                signProvider = (decodedToken.claims["firebase"] as Map<*, *>)["sign_in_provider"] as String
+                signProvider = (decodedToken.claims["firebase"] as Map<*, *>)["sign_in_provider"] as String,
+                createdAt = Timestamp.from(Instant.now())
             )
         } catch (e: FirebaseAuthException) {
             if (e.authErrorCode == AuthErrorCode.REVOKED_ID_TOKEN) {
