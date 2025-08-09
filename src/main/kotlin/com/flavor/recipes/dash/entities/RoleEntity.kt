@@ -13,9 +13,7 @@ data class RoleEntity(
     @UuidGenerator
     @Column(name = "id", updatable = false, unique = true, nullable = false)
     val id: String? = null,
-    @Column(nullable = false)
-    val description: String,
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     val userId: String,
     @Column(nullable = false)
     val type: RoleType
