@@ -28,7 +28,8 @@ class SecurityService {
                 email = decodedToken.claims["email"] as String,
                 emailVerified = decodedToken.claims["email_verified"] as Boolean,
                 signProvider = (decodedToken.claims["firebase"] as Map<*, *>)["sign_in_provider"] as String,
-                createdAt = Timestamp.from(Instant.now())
+                createdAt = Timestamp.from(Instant.now()),
+                false,
             )
         } catch (e: FirebaseAuthException) {
             if (e.authErrorCode == AuthErrorCode.REVOKED_ID_TOKEN) {

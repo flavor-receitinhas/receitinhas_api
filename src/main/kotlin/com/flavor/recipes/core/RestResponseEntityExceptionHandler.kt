@@ -16,8 +16,21 @@ class RestResponseEntityExceptionHandler
     @ExceptionHandler(BusinessException::class)
     fun handleBusinessError(e: BusinessException): ResponseEntity<Any> {
         return ResponseEntity<Any>(
-            mapOf("message" to e.message),
+            mapOf(
+                "message" to e.message,
+                "error_code" to e.codeError
+            ),
             HttpStatus.UNPROCESSABLE_ENTITY
+        )
+    }
+
+    @ExceptionHandler(NotFoundException::class)
+    fun handleNotFoundExceptionError(e: NotFoundException): ResponseEntity<Any> {
+        return ResponseEntity<Any>(
+            mapOf(
+                "message" to e.message
+            ),
+            HttpStatus.NOT_FOUND
         )
     }
 
