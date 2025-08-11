@@ -46,6 +46,25 @@ class UsersService {
         }
     }
 
+    fun getByEmail(email: String): UserEntity {
+        try {
+            val user = FirebaseAuth.getInstance().getUserByEmail(email)
+            return UserEntity(
+                id = user.uid,
+                email = user.email,
+                emailVerified = user.isEmailVerified,
+                signProvider = user.providerId,
+                createdAt = Timestamp.from(Instant.ofEpochMilli(user.userMetadata.creationTimestamp)),
+                disabled = user.isDisabled
+            )
+        } catch (e: FirebaseAuthException) {
+            if (e.errorCode == ErrorCode.NOT_FOUND) {
+                throw NotFoundException(e.message ?: e.toString())
+            }
+            throw BusinessException(e.message ?: e.toString(), e.errorCode.name)
+        }
+    }
+
     fun disableUser(userId: String, disabled: Boolean) {
         val request = UserRecord.UpdateRequest(userId)
             .setDisabled(disabled)

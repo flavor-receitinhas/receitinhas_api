@@ -24,6 +24,12 @@ class UsersController(var usersService: UsersService, val handlerRoleUser: Handl
         return usersService.getById(id)
     }
 
+    @GetMapping("/email/{email}")
+    fun getByEmail(@AuthenticationPrincipal userAuth: UserEntity, @PathVariable email: String): UserEntity {
+        handlerRoleUser.handleIsAdmin(userAuth)
+        return usersService.getByEmail(email)
+    }
+
     @PostMapping("/disable/{userId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun blockUser(@AuthenticationPrincipal userAuth: UserEntity, @PathVariable userId: String) {
