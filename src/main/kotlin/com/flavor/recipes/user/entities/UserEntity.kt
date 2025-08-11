@@ -1,5 +1,6 @@
 package com.flavor.recipes.user.entities
 
+
 import java.sql.Timestamp
 
 data class UserEntity(
@@ -8,4 +9,5 @@ data class UserEntity(
     val emailVerified: Boolean,
     val signProvider: String,
     var createdAt: Timestamp,
+    val disabled: Boolean,
 )

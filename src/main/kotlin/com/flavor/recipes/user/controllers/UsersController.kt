@@ -18,6 +18,12 @@ class UsersController(var usersService: UsersService, val handlerRoleUser: Handl
         return usersService.list(pageToken)
     }
 
+    @GetMapping("/{id}")
+    fun getById(@AuthenticationPrincipal userAuth: UserEntity, @PathVariable id: String): UserEntity {
+        handlerRoleUser.handleIsAdmin(userAuth)
+        return usersService.getById(id)
+    }
+
     @PostMapping("/disable/{userId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun blockUser(@AuthenticationPrincipal userAuth: UserEntity, @PathVariable userId: String) {
