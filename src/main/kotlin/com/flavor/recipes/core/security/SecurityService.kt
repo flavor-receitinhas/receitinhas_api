@@ -1,6 +1,7 @@
 package com.flavor.recipes.core.security
 
 
+import com.flavor.recipes.dash.entities.RoleType
 import com.flavor.recipes.user.entities.UserEntity
 import com.google.firebase.auth.AuthErrorCode
 import com.google.firebase.auth.FirebaseAuth
@@ -30,6 +31,7 @@ class SecurityService {
                 signProvider = (decodedToken.claims["firebase"] as Map<*, *>)["sign_in_provider"] as String,
                 createdAt = Timestamp.from(Instant.now()),
                 false,
+                RoleType.common
             )
         } catch (e: FirebaseAuthException) {
             if (e.authErrorCode == AuthErrorCode.REVOKED_ID_TOKEN) {

@@ -1,6 +1,7 @@
 package com.flavor.recipes.user.entities
 
 
+import com.flavor.recipes.dash.entities.RoleType
 import java.sql.Timestamp
 
 data class UserEntity(
@@ -10,4 +11,5 @@ data class UserEntity(
     val signProvider: String,
     var createdAt: Timestamp,
     val disabled: Boolean,
+    val type: RoleType
 )

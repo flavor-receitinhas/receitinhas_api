@@ -4,6 +4,7 @@ import com.flavor.recipes.core.BusinessException
 import com.flavor.recipes.core.services.HandlerRoleUser
 import com.flavor.recipes.dash.entities.CreateRoleUserDto
 import com.flavor.recipes.dash.entities.RoleEntity
+import com.flavor.recipes.dash.entities.RoleType
 import com.flavor.recipes.dash.repositories.RoleRepository
 import com.flavor.recipes.user.entities.UserEntity
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -16,14 +17,19 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "Roles")
 class RoleController(val roleRepository: RoleRepository, val handlerRoleUser: HandlerRoleUser) {
     @GetMapping("/me")
-    fun get(@AuthenticationPrincipal userAuth: UserEntity): RoleEntity? {
+    fun getMe(@AuthenticationPrincipal userAuth: UserEntity): RoleEntity? {
         val result = roleRepository.findByUserId(userAuth.id)
         if (result.isPresent)
             return result.get()
         throw BusinessException("Usuario sem role")
     }
 
-    @PostMapping
+    @GetMapping
+    fun get(): List<RoleType> {
+        return RoleType.values().toList()
+    }
+
+    @PostMapping("/user")
     fun create(@AuthenticationPrincipal userAuth: UserEntity, @RequestBody body: CreateRoleUserDto): RoleEntity? {
         handlerRoleUser.handleIsAdmin(userAuth)
         val findRole = roleRepository.findByUserId(body.userId)
@@ -39,7 +45,7 @@ class RoleController(val roleRepository: RoleRepository, val handlerRoleUser: Ha
         return result
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/user/{id}")
     fun update(
         @AuthenticationPrincipal userAuth: UserEntity,
         @RequestBody body: CreateRoleUserDto,
@@ -55,7 +61,7 @@ class RoleController(val roleRepository: RoleRepository, val handlerRoleUser: Ha
         )
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/user/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun delete(
         @AuthenticationPrincipal userAuth: UserEntity,
