@@ -2,9 +2,9 @@ package com.flavor.recipes.dash.controllers
 
 import com.flavor.recipes.core.BusinessException
 import com.flavor.recipes.core.services.HandlerRoleUser
-import com.flavor.recipes.dash.entities.CreateRoleUserDto
 import com.flavor.recipes.dash.entities.RoleEntity
 import com.flavor.recipes.dash.entities.RoleType
+import com.flavor.recipes.dash.entities.UpdateRoleUserDto
 import com.flavor.recipes.dash.repositories.RoleRepository
 import com.flavor.recipes.user.entities.UserEntity
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -29,36 +29,25 @@ class RoleController(val roleRepository: RoleRepository, val handlerRoleUser: Ha
         return RoleType.values().toList()
     }
 
-    @PostMapping("/user")
-    fun create(@AuthenticationPrincipal userAuth: UserEntity, @RequestBody body: CreateRoleUserDto): RoleEntity? {
-        handlerRoleUser.handleIsAdmin(userAuth)
-        val findRole = roleRepository.findByUserId(body.userId)
-        if (findRole.isPresent) {
-            throw BusinessException("Usuario já tem role")
-        }
-        val result = roleRepository.save(
-            RoleEntity(
-                userId = body.userId,
-                type = body.type,
-            )
-        )
-        return result
-    }
-
-    @PutMapping("/user/{id}")
+    @PutMapping("/user")
     fun update(
         @AuthenticationPrincipal userAuth: UserEntity,
-        @RequestBody body: CreateRoleUserDto,
-        @PathVariable id: String
+        @RequestBody body: UpdateRoleUserDto,
     ): RoleEntity? {
         handlerRoleUser.handleIsAdmin(userAuth)
-        val findRole = roleRepository.findById(id)
-        if (!findRole.isPresent) {
-            throw BusinessException("Role não encontrada")
+        val findRole = roleRepository.findByUserId(body.userId)
+        return if (findRole.isPresent) {
+            roleRepository.save(
+                findRole.get().copy(type = body.type)
+            )
+        } else {
+            roleRepository.save(
+                RoleEntity(
+                    userId = body.userId,
+                    type = body.type,
+                )
+            )
         }
-        return roleRepository.save(
-            findRole.get().copy(type = body.type)
-        )
     }
 
     @DeleteMapping("/user/{id}")

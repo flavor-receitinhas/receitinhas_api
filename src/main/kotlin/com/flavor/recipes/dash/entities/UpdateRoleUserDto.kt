@@ -1,6 +1,6 @@
 package com.flavor.recipes.dash.entities
 
-data class CreateRoleUserDto(
+data class UpdateRoleUserDto(
     val userId: String = "",
     val type: RoleType = RoleType.common
 )
